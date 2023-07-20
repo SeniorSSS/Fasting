@@ -9,7 +9,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("appsettings.json", true, true);
 builder.Configuration.AddEnvironmentVariables();
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:3000")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
+builder.Services.AddAuthorization();
 
 // Add your DbContexts
 builder.Services.AddDbContext<FastingContext>(options =>
@@ -58,6 +69,5 @@ catch (Exception ex)
 // Configure middleware
 app.UseRouting();
 app.UseIdentityServer();
-app.UseAuthorization();
 
 app.Run();
